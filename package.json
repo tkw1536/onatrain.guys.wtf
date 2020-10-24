@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "build": "next build && next export",
+    "start": "next start",
+    "deploy": "yarn build && push-dir --dir=out --branch=gh-pages"
   },
   "dependencies": {
     "next": "9.5.5",
     "nprogress": "^0.2.0",
+    "push-dir": "^0.4.1",
     "react": "17.0.0",
     "react-dom": "17.0.0"
   },

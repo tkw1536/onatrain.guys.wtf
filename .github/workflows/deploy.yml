@@ -1,0 +1,21 @@
+name: Deploy
+on:
+    push:
+        branches:
+            - main
+jobs:
+  deploy:
+    name: Deploy to 'gh-pages' branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - name: Install dependencies using 'yarn install'
+        run: yarn install
+      - name: Deploy using 'yarn deploy'
+        run: |
+          git config --local user.email "${{ github.actor }}@users.noreply.github.com"
+          git config --local user.name "GitHub Action"
+          yarn deploy
