@@ -40,6 +40,7 @@ export default class Home extends React.Component<{count: number, categories: St
         </div>
         <div>
           <h2>By Station Category</h2>
+          <p>There are seven categories. Click on a category label to view all stations of that category. </p>
           <table>
               {categories.map(cls => <tr key={cls}>
                 <td><StationCategoryLink category={cls} /></td>
@@ -49,6 +50,7 @@ export default class Home extends React.Component<{count: number, categories: St
         </div>
         <div>
           <h2>By Region</h2>
+          <p>There are seven regions. Click on a region label to view all stations in that region. </p>
           <table>
               {regions.map(region => <tr key={region}>
                 <td><RegionalAreaLink region={region} /></td>
