@@ -49,7 +49,7 @@ export default class extends App {
         const { Component, pageProps } = this.props;
         const { routing } = this.state;
         return <>
-            {routing && <AppRoutingIndicator minDelay={500} />}
+            {routing && <AppRoutingIndicator minDelay={100} />}
             <Component {...pageProps} />
         </>;
     }
