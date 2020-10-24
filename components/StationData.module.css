@@ -1,0 +1,62 @@
+a.Enum_1_7,
+a.Enum_2_7,
+a.Enum_3_7,
+a.Enum_4_7,
+a.Enum_5_7,
+a.Enum_6_7,
+a.Enum_7_7 {
+  text-decoration: none;
+
+  border: 3px solid;
+  border-radius: 3px;
+
+  margin-right: 5px;
+
+  display: inline-block;
+}
+
+td a.Enum_1_7,
+td a.Enum_2_7,
+td a.Enum_3_7,
+td a.Enum_4_7,
+td a.Enum_5_7,
+td a.Enum_6_7,
+td a.Enum_7_7 {
+  display: block;
+}
+
+a.Enum_1_7 {
+  color: black;
+  background-color: violet;
+  border-color: violet;
+}
+a.Enum_2_7 {
+  color: white;
+  background-color: indigo;
+  border-color: indigo;
+}
+a.Enum_3_7 {
+  color: white;
+  background-color: blue;
+  border-color: blue;
+}
+a.Enum_4_7 {
+  color: black;
+  background-color: green;
+  border-color: green;
+}
+a.Enum_5_7 {
+  color: black;
+  background-color: yellow;
+  border-color: yellow;
+}
+a.Enum_6_7 {
+  color: black;
+  background-color: orange;
+  border-color: orange;
+}
+a.Enum_7_7 {
+  color: black;
+  background-color: red;
+  border-color: red;
+}
