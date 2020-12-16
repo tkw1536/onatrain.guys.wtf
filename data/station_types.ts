@@ -1,7 +1,7 @@
 
 /** TStation represents a single station */
 export interface TStation {
-    State: string;
+    State: FederalState;
     RegionalArea: RegionalArea;
     StationManagement: string;
     ID: number;
@@ -53,9 +53,63 @@ export function RegionalAreaFromString(value: string): RegionalArea {
 }
 
 export function RegionalAreaToString(region: RegionalArea): string {
-    const [areaString,area] = Object.entries(regionalAreaStrings).find(x => x[1] == region) || ["", RegionalArea.West];
+    const [areaString,_] = Object.entries(regionalAreaStrings).find(x => x[1] == region) || ["", RegionalArea.West];
     if (areaString == "") {
         throw new Error("Unknown RegionalArea: " + region);
     }
     return areaString;
+}
+
+export enum FederalState {
+    BadenWuerttemberg = "BW",
+    Bavaria = "BY",
+    Berlin = "BE",
+    Brandenburg = "BB",
+    Bremen = "HB",
+    Hamburg = "HH",
+    Hesse = "HE",
+    LowerSaxony = "NI",
+    MecklenburgVorpommern = "MV",
+    NorthRhineWestphalia = "NW",
+    RhinelandPalatinate = "RP",
+    Saarland = "SL",
+    Saxony = "SN",
+    SaxonyAnhalt = "ST",
+    SchleswigHolstein = "SH",
+    Thuringia = "TH",
+}
+
+const federalStateStrings: Record<string, FederalState> = {
+    "Baden-Württemberg": FederalState.BadenWuerttemberg,
+    "Bayern": FederalState.Bavaria,
+    "Berlin": FederalState.Berlin,
+    "Brandenburg": FederalState.Brandenburg,
+    "Bremen": FederalState.Bremen,
+    "Hamburg": FederalState.Hamburg,
+    "Hessen": FederalState.Hesse,
+    "Niedersachsen": FederalState.LowerSaxony,
+    "Mecklenburg-Vorpommern": FederalState.MecklenburgVorpommern,
+    "Nordrhein-Westfalen": FederalState.NorthRhineWestphalia,
+    "Rheinland-Pfalz": FederalState.RhinelandPalatinate,
+    "Saarland": FederalState.Saarland,
+    "Sachsen": FederalState.Saxony,
+    "Sachsen-Anhalt": FederalState.SaxonyAnhalt,
+    "Schleswig-Holstein": FederalState.SchleswigHolstein,
+    "Thüringen": FederalState.Thuringia,
+}
+
+export function FederalStateFromString(value: string): FederalState {
+    const state = federalStateStrings[value];
+    if (!state) {
+        throw new Error("Unknown FederalState: " + value); 
+    }
+    return state;
+}
+
+export function FederalStateToString(state: FederalState): string {
+    const [stateString,_] = Object.entries(federalStateStrings).find(x => x[1] == state) || ["", FederalState.Berlin];
+    if (stateString == "") {
+        throw new Error("Unknown FederalState: " + state);
+    }
+    return stateString;
 }

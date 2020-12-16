@@ -1,6 +1,6 @@
 import Link from "next/link";
 import * as React from "react";
-import { RegionalArea, RegionalAreaToString, StationCategory } from "../data/station_types";
+import { FederalState, FederalStateToString, RegionalArea, RegionalAreaToString, StationCategory } from "../data/station_types";
 import style from "./StationData.module.css";
 
 export class StationCategoryLink extends React.Component<{ category: StationCategory }> {
@@ -23,3 +23,12 @@ export class RegionalAreaLink extends React.Component<{ region: RegionalArea }> 
 }
 
 
+
+export class FederalStateLink extends React.Component<{ state: FederalState }> {
+    render() {
+        const { state } = this.props;
+        return <Link href={`/state/${state}`}>
+            <a>{FederalStateToString(state)}</a>
+        </Link>;
+    }
+}

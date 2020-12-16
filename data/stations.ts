@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { RegionalArea, RegionalAreaFromString, StationCategory, TStation } from "./station_types";
+import { FederalState, FederalStateFromString, RegionalArea, RegionalAreaFromString, StationCategory, TStation } from "./station_types";
 
 
 let stations: Readonly<TStation>[];
@@ -28,7 +28,15 @@ export function getStationsByCategory(category: StationCategory) {
 }
 
 export function getStationCategories(): StationCategory[] {
-    return [StationCategory.Class1, StationCategory.Class2, StationCategory.Class3, StationCategory.Class4, StationCategory.Class5, StationCategory.Class6, StationCategory.Class7];
+    return [
+        StationCategory.Class1,
+        StationCategory.Class2,
+        StationCategory.Class3,
+        StationCategory.Class4,
+        StationCategory.Class5,
+        StationCategory.Class6,
+        StationCategory.Class7
+    ];
 }
 
 export function getStationsByRegion(region: RegionalArea) {
@@ -36,7 +44,40 @@ export function getStationsByRegion(region: RegionalArea) {
 }
 
 export function getStationRegions(): RegionalArea[] {
-    return [RegionalArea.Center, RegionalArea.North, RegionalArea.East, RegionalArea.South, RegionalArea.SouthEast, RegionalArea.SouthWest, RegionalArea.West];
+    return [
+        RegionalArea.Center,
+        RegionalArea.North,
+        RegionalArea.East,
+        RegionalArea.South,
+        RegionalArea.SouthEast,
+        RegionalArea.SouthWest,
+        RegionalArea.West
+    ];
+}
+
+export function getStationByState(state: FederalState) {
+    return getAllStations().filter(s => s.State === state);
+}
+
+export function getStationStates(): FederalState[] {
+    return [
+        FederalState.BadenWuerttemberg, 
+        FederalState.Bavaria, 
+        FederalState.Berlin, 
+        FederalState.Brandenburg, 
+        FederalState.Bremen, 
+        FederalState.Hamburg, 
+        FederalState.Hesse, 
+        FederalState.LowerSaxony, 
+        FederalState.MecklenburgVorpommern, 
+        FederalState.NorthRhineWestphalia, 
+        FederalState.RhinelandPalatinate, 
+        FederalState.Saarland, 
+        FederalState.Saxony, 
+        FederalState.SaxonyAnhalt, 
+        FederalState.SchleswigHolstein, 
+        FederalState.Thuringia
+    ];
 }
 
 /* readStations reads all stations from the disk */
@@ -71,7 +112,7 @@ function parseStation(line: string): Readonly<TStation> {
     const parts = line.trim().split(";");
     
     const station = {
-        State: parts[0],
+        State: FederalStateFromString(parts[0]),
         RegionalArea: RegionalAreaFromString(parts[1]),
         StationManagement: parts[2],
         ID: parseInt(parts[3], 10),

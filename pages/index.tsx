@@ -2,9 +2,9 @@ import { GetStaticProps } from "next";
 import Link from "next/link";
 import * as React from "react";
 import PageTitle from "../components/PageTitle";
-import { RegionalAreaLink, StationCategoryLink } from "../components/StationData";
-import { getStationCategories, getStationCount, getStationRegions, } from "../data/stations";
-import { RegionalArea, StationCategory } from "../data/station_types";
+import { FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../components/StationData";
+import { getStationCategories, getStationCount, getStationRegions, getStationStates, } from "../data/stations";
+import { FederalState, FederalStateToString, RegionalArea, StationCategory } from "../data/station_types";
 
 const StationCatgeoryDescriptions: Record<StationCategory, string> = {
   1: "Traffic Hub",
@@ -16,19 +16,19 @@ const StationCatgeoryDescriptions: Record<StationCategory, string> = {
   7: "Rural Station",
 }
 
-const RegionalAreaDescription: Record<RegionalArea, string> = {
-  "west": "North Rhine-Westphalia",
-  "southwest": "Baden-Württemberg",
-  "southeast": "Saxony, Saxony-Anhalt, Thuringia",
-  "south": "Bavaria",
-  "east": "Berlin, Brandenburg, Mecklenburg-Vorpommern",
-  "north": "Schleswig-Holstein, Hamburg, Lower Saxony, Bremen",
-  "center": "Hesse, Rheinland-Pfalz, Saarland",
+const RegionalAreaStates: Record<RegionalArea, FederalState[]> = {
+  "west": [FederalState.NorthRhineWestphalia],
+  "southwest": [FederalState.BadenWuerttemberg],
+  "southeast": [FederalState.Saxony, FederalState.SaxonyAnhalt, FederalState.Thuringia],
+  "south": [FederalState.Bavaria],
+  "east": [FederalState.Berlin, FederalState.Brandenburg, FederalState.MecklenburgVorpommern],
+  "north": [FederalState.SchleswigHolstein, FederalState.Hamburg, FederalState.LowerSaxony, FederalState.Bremen],
+  "center": [FederalState.Hesse, FederalState.RhinelandPalatinate, FederalState.Saarland],
 }
 
-export default class Home extends React.Component<{count: number, categories: StationCategory[], regions: RegionalArea[]}> {
+export default class Home extends React.Component<{count: number, categories: StationCategory[], regions: RegionalArea[], states: FederalState[]}> {
   render() {
-    const { count, categories, regions } = this.props;
+    const { count, categories, regions, states } = this.props;
     return <>
         <PageTitle noHomeLink>On A Train</PageTitle>
         <div>
@@ -38,6 +38,7 @@ export default class Home extends React.Component<{count: number, categories: St
           <h2>All Stations</h2>
           <Link href="/all"><a>View all {count} Stations on one page</a></Link>.
         </div>
+
         <div>
           <h2>By Station Category</h2>
           <p>There are seven categories. Click on a category label to view all stations of that category. </p>
@@ -48,13 +49,18 @@ export default class Home extends React.Component<{count: number, categories: St
               </tr>)}
           </table>
         </div>
+
         <div>
-          <h2>By Region</h2>
-          <p>There are seven regions. Click on a region label to view all stations in that region. </p>
+          <h2>By Region / Federal State</h2>
+          <p>There are seven regions and sixteen states. Click on a region label to view all stations in that region. </p>
           <table>
               {regions.map(region => <tr key={region}>
                 <td><RegionalAreaLink region={region} /></td>
-                <td>{RegionalAreaDescription[region]}</td>
+                <td>{
+                  RegionalAreaStates[region]
+                    .map(state => <FederalStateLink key={state} state={state} /> as React.ReactNode)
+                    .reduce((previous, current) => [previous, ", ", current])
+                }</td>
               </tr>)}
           </table>
         </div>
@@ -68,6 +74,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       count: getStationCount(),
       categories: getStationCategories(),
       regions: getStationRegions(),
+      states: getStationStates(),
     }
   };
 }

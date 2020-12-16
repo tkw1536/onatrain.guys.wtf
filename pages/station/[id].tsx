@@ -1,7 +1,7 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import * as React from "react";
 import PageTitle from "../../components/PageTitle";
-import { RegionalAreaLink, StationCategoryLink } from "../../components/StationData";
+import { FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../../components/StationData";
 import { getStationByID, getStationIDs } from "../../data/stations";
 import { TStation } from "../../data/station_types";
 import style from "./station.module.css";
@@ -36,7 +36,7 @@ export default class Station extends React.Component<{ station: TStation }> {
 
         <tr>
           <td>State</td>
-          <td>{station.State}</td>
+          <td><FederalStateLink state={station.State} /></td>
         </tr>
 
         <tr>
