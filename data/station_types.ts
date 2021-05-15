@@ -13,6 +13,7 @@ export interface TStation {
     AddressCity: string;
     TransportAuthority: string;
     stop: TStop,
+    tracks: TTrack[],
 }
 
 export interface TStop {
@@ -30,6 +31,15 @@ export interface TStop {
     operatorNr: number;
     
     status: string;
+}
+
+export interface TTrack {
+    stationID: number;
+    track: string;
+    number: number;
+    name: string;
+    length: number; // in m
+    height: number; // in cm
 }
 
 export enum StationCategory {

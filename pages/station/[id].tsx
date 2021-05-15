@@ -3,7 +3,7 @@ import * as React from "react";
 import PageTitle from "../../components/PageTitle";
 import { FederalStateLink, ManagementLink, RegionalAreaLink, StationCategoryLink, TransportAuthorityLink } from "../../components/StationData";
 import { getStationByID, getStationIDs } from "../../data/stations";
-import { TStation, TStop } from "../../data/station_types";
+import { TStation, TTrack } from "../../data/station_types";
 import styles from "./station.module.css";
 
 export default class Station extends React.Component<{ station: TStation }> {
@@ -122,7 +122,19 @@ export default class Station extends React.Component<{ station: TStation }> {
           </tr>
           
         </Group>
+      </table>
 
+      <h2>Tracks</h2>
+
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Platform</th>
+          <th>Length</th>
+          <th>Height</th>
+        </tr>
+        {station.tracks.map(track => <Track key={track.name} track={track} />)}
       </table>
     </div>;
   }
@@ -139,6 +151,29 @@ class Group extends React.Component {
           </td>
         </tr>
     </>;
+  }
+}
+
+class Track extends React.Component<{ track: TTrack }> {
+  render() {
+    const { track } = this.props;
+    return <tr>
+        <td>
+          {track.name}
+        </td>
+        <td>
+          {track.number}
+        </td>
+        <td>
+          {track.track}
+        </td>
+        <td>
+          {track.length} m
+        </td>
+        <td>
+          {track.height} cm
+        </td>
+      </tr>
   }
 }
 

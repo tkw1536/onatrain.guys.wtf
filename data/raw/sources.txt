@@ -1,2 +1,3 @@
 DBSuS-Uebersicht_Bahnhoefe-Stand2020-03.csv - https://data.deutschebahn.com/dataset/data-stationsdaten.html
+DBSuS-Bahnsteigdaten-Stand2020-03.csv - https://data.deutschebahn.com/dataset/data-bahnsteig.html
 D_Bahnhof_2020_alle.csv - https://data.deutschebahn.com/dataset/data-haltestellen.html

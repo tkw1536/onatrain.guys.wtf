@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { FederalState, FederalStateFromString, RegionalArea, RegionalAreaFromString, StationCategory, TrafficFromString, TStation, TStop } from "./station_types";
+import { FederalState, FederalStateFromString, RegionalArea, RegionalAreaFromString, StationCategory, TrafficFromString, TStation, TStop, TTrack } from "./station_types";
 import { alternates } from "./raw/alternates";
 
 
@@ -106,6 +106,11 @@ function readStations(): Readonly<TStation>[] {
     const susLines = parseCSV(susPath);
     const susStations = susLines.map(parseSUSLine);
 
+    // parse tracks dataset
+    const tracksPath = path.join(process.cwd(), 'data', 'raw', 'DBSuS-Bahnsteigdaten-Stand2020-03.csv');
+    const tracksLines = parseCSV(tracksPath);
+    const tracks = tracksLines.map(parseTrack);
+
     // parse Bahnhof dataset
     const stopsPath = path.join(process.cwd(), 'data', 'raw', 'D_Bahnhof_2020_alle.CSV');
     const stopLines = parseCSV(stopsPath);
@@ -113,7 +118,17 @@ function readStations(): Readonly<TStation>[] {
 
 
     // integrate them!
-    let stations: Array<TStation> = susStations.map(s => ({stop: undefined!, ...s}));
+    let stations: Array<TStation> = susStations.map(s => ({stop: undefined!, tracks: [], ...s}));
+
+    tracks.forEach(track => {
+        let index = stations.findIndex(st => st.ID === track.stationID);
+        if (index === -1) {
+            console.log("Missing Station with ID " + track.stationID);
+            return;
+        }
+        stations[index].tracks.push(track);
+    })
+
     stops.forEach(stop => {
         stop.DS100.forEach(ds100 => {
             let index = stations.findIndex(st => st.DS100Office === ds100);
@@ -125,7 +140,6 @@ function readStations(): Readonly<TStation>[] {
                 index = stations.findIndex(st => st.DS100Office === alt);
             }
             if (index === -1) {
-                // missingDS100s.add(ds100);
                 return;
             }
             const oldStop = stations[index].stop;
@@ -140,11 +154,19 @@ function readStations(): Readonly<TStation>[] {
 
     stations = stations.filter(station => {
         if (!station.DS100Office) return false;
+
         if (station.stop === undefined) {
             // console.log("Station without alternate: " + station.DS100Office );
             // console.log(JSON.stringify(station.Station) + ": " + JSON.stringify(station.DS100Office) + ",");
             return false;
         }
+        if (station.tracks.length === 0) {
+            // console.log("station without tracks: "+ station.DS100Office);
+            return false;
+        }
+
+        // sort the tracks!
+        station.tracks.sort((a, b) => a.number - b.number);
 
         return true;
     })
@@ -240,4 +262,27 @@ function parseStop(line: Array<string>): Readonly<TStop> {
     }
 
     return stop;
+}
+
+function parseTrack(line: Array<string>): TTrack {
+    const track = {
+        stationID: parseInt(line[0], 10),
+        track: line[1],
+        number: parseInt(line[2], 10),
+        name: line[3],
+        length: parseInt(line[4], 10), // in m
+        height: parseInt(line[5], 10), // in cm
+    }
+
+        // in development mode, throw errors that occur during parsing!
+        if (process.env.NODE_ENV === "development") {
+            for (let key in track) {
+                if ((track as any)[key] === undefined) {
+                    throw new Error("Station " + track + ": " + key + " is undefined! ");
+                }
+            }
+        }
+    
+    
+    return track;
 }
