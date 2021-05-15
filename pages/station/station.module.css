@@ -1,6 +1,5 @@
 .mapLink {
     color: green !important;
-
 }
 
 .mapLink::before {
@@ -11,4 +10,9 @@
 .mapLink::after {
     color: black;
     content: "]";
+}
+
+.tableGroup {
+    display:block;
+    border-top: 2px solid black;
 }

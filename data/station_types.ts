@@ -13,7 +13,7 @@ export interface TStation {
     AddressCity: string;
     TransportAuthority: string;
     stop: TStop,
-    tracks: TTrack[],
+    platforms: TTrack[][], /* tracks grouped by platform */
 }
 
 export interface TStop {
@@ -35,7 +35,7 @@ export interface TStop {
 
 export interface TTrack {
     stationID: number;
-    track: string;
+    platform: string;
     number: number;
     name: string;
     length: number; // in m

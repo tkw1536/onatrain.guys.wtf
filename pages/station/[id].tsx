@@ -129,24 +129,27 @@ export default class Station extends React.Component<{ station: TStation }> {
       <table>
         <tr>
           <th>Name</th>
-          <th>Number</th>
-          <th>Platform</th>
           <th>Length</th>
           <th>Height</th>
         </tr>
-        {station.tracks.map(track => <Track key={track.name} track={track} />)}
+        <Group key="" width={3}></Group>
+        {station.platforms.map(platform => {
+          return <Group key={platform[0].platform} width={3}>
+            {platform.map(track => <Track key={track.name} track={track} />)}
+          </Group>
+        })}
       </table>
     </div>;
   }
 }
 
-class Group extends React.Component {
+class Group extends React.Component<{ width?: number }> {
   render() {
-    const { children } = this.props;
+    const { children, width = 2 } = this.props;
     return <>
         { children }
         <tr>
-          <td colSpan={2}>
+          <td colSpan={width}>
             <hr />
           </td>
         </tr>
@@ -160,12 +163,6 @@ class Track extends React.Component<{ track: TTrack }> {
     return <tr>
         <td>
           {track.name}
-        </td>
-        <td>
-          {track.number}
-        </td>
-        <td>
-          {track.track}
         </td>
         <td>
           {track.length} m

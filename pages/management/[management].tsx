@@ -3,7 +3,8 @@ import * as React from "react";
 import PageTitle from "../../components/PageTitle";
 import StationList from "../../components/StationList";
 import { getStationManagements, getStationsByManagement, getStationsByRegion } from "../../data/stations";
-import { RegionalArea, TStation } from "../../data/station_types";
+import { TStation } from "../../data/station_types";
+import { decodeData, encodeData } from "../../data/utils";
 
 export default class extends React.Component<{management: string, stations: Readonly<TStation>[]}> {
     render() {
@@ -16,7 +17,7 @@ export default class extends React.Component<{management: string, stations: Read
   }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const managements = getStationManagements().map(c => ({ params: { management: btoa(c.toString()) } }));
+  const managements = getStationManagements().map(c => ({ params: { management: encodeData(c.toString()) } }));
   return {
     paths: managements,
     fallback: false,
@@ -24,7 +25,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const management = atob(context.params!.management as RegionalArea);
+    const management = decodeData(context.params!.management as string);
     return {
       props: {
         management: management,

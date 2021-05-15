@@ -1,6 +1,7 @@
 import Link from "next/link";
 import * as React from "react";
 import { FederalState, FederalStateToString, RegionalArea, RegionalAreaToString, StationCategory } from "../data/station_types";
+import { encodeData } from "../data/utils";
 import style from "./StationData.module.css";
 
 export class StationCategoryLink extends React.Component<{ category: StationCategory }> {
@@ -36,7 +37,7 @@ export class ManagementLink extends React.Component<{ management: string }> {
     render() {
         const { management } = this.props;
         if (!management) return null;
-        return <Link href={`/management/${btoa(management)}`}>
+        return <Link href={`/management/${encodeData(management)}`}>
             <a>{management}</a>
         </Link>;
     }
@@ -46,7 +47,7 @@ export class TransportAuthorityLink extends React.Component<{ authority: string 
     render() {
         const { authority } = this.props;
         if (!authority) return null;
-        return <Link href={`/authority/${btoa(authority)}`}>
+        return <Link href={`/authority/${encodeData(authority)}`}>
             <a>{authority}</a>
         </Link>;
     }

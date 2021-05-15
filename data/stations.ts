@@ -2,6 +2,7 @@ import path from "path";
 import fs from "fs";
 import { FederalState, FederalStateFromString, RegionalArea, RegionalAreaFromString, StationCategory, TrafficFromString, TStation, TStop, TTrack } from "./station_types";
 import { alternates } from "./raw/alternates";
+import { groupBy } from "./utils";
 
 
 let stations: Readonly<TStation>[];
@@ -118,7 +119,7 @@ function readStations(): Readonly<TStation>[] {
 
 
     // integrate them!
-    let stations: Array<TStation> = susStations.map(s => ({stop: undefined!, tracks: [], ...s}));
+    let stations: Array<TStation> = susStations.map(s => ({stop: undefined!, platforms: [[]], ...s}));
 
     tracks.forEach(track => {
         let index = stations.findIndex(st => st.ID === track.stationID);
@@ -126,7 +127,12 @@ function readStations(): Readonly<TStation>[] {
             console.log("Missing Station with ID " + track.stationID);
             return;
         }
-        stations[index].tracks.push(track);
+        stations[index].platforms[0].push(track);
+    });
+
+    stations.forEach(station => {
+        const tracks = station.platforms[0].sort((a, b) => a.number - b.number);
+        station.platforms = groupBy(tracks, (track: TTrack) => track.platform);
     })
 
     stops.forEach(stop => {
@@ -160,13 +166,10 @@ function readStations(): Readonly<TStation>[] {
             // console.log(JSON.stringify(station.Station) + ": " + JSON.stringify(station.DS100Office) + ",");
             return false;
         }
-        if (station.tracks.length === 0) {
+        if (station.platforms.length === 0) {
             // console.log("station without tracks: "+ station.DS100Office);
             return false;
         }
-
-        // sort the tracks!
-        station.tracks.sort((a, b) => a.number - b.number);
 
         return true;
     })
@@ -267,7 +270,7 @@ function parseStop(line: Array<string>): Readonly<TStop> {
 function parseTrack(line: Array<string>): TTrack {
     const track = {
         stationID: parseInt(line[0], 10),
-        track: line[1],
+        platform: line[1],
         number: parseInt(line[2], 10),
         name: line[3],
         length: parseInt(line[4], 10), // in m
