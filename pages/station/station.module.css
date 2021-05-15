@@ -1,0 +1,14 @@
+.mapLink {
+    color: green !important;
+
+}
+
+.mapLink::before {
+    color: black;
+    content: "[";
+}
+
+.mapLink::after {
+    color: black;
+    content: "]";
+}

@@ -1,16 +1,15 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import * as React from "react";
 import PageTitle from "../../components/PageTitle";
-import { DS100Link, FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../../components/StationData";
+import { FederalStateLink, ManagementLink, RegionalAreaLink, StationCategoryLink, TransportAuthorityLink } from "../../components/StationData";
 import { getStationByID, getStationIDs } from "../../data/stations";
 import { TStation } from "../../data/station_types";
-import Ds100 from "../ds100/[ds100]";
-import style from "./station.module.css";
+import styles from "./station.module.css";
 
 export default class Station extends React.Component<{ station: TStation }> {
   render() {
     const { station } = this.props;
-    return <div className={style.station}>
+    return <div className={styles.station}>
       <PageTitle>{station.Station}</PageTitle>
 
       <table>
@@ -27,7 +26,7 @@ export default class Station extends React.Component<{ station: TStation }> {
 
         <tr>
           <td>DS 100</td>
-          <td><DS100Link ds100={station.DS100Office} /></td>
+          <td><pre>{station.DS100Office}</pre></td>
         </tr>
 
         <tr>
@@ -42,7 +41,7 @@ export default class Station extends React.Component<{ station: TStation }> {
 
         <tr>
           <td>Station Management</td>
-          <td>{station.StationManagement}</td>
+          <td><ManagementLink management={station.StationManagement} /></td>
         </tr>
 
         <tr>
@@ -54,19 +53,38 @@ export default class Station extends React.Component<{ station: TStation }> {
           <td>Address</td>
           <td>
             {station.AddressStreet}<br />
-            {station.AddressZIP} {station.AddressCity}
+            {station.AddressZIP} {station.AddressCity}<br />
+            <b>View on:</b>&nbsp;
+            <a href={makeOpenStreetMapLink(station)} className={styles.mapLink} rel="noopener noreferrer" target="_blank">OpenStreetMap</a>&nbsp;
+            <a href={makeBingMapsLink(station)} className={styles.mapLink} rel="noopener noreferrer" target="_blank">Bing Maps</a>&nbsp;
+            <a href={makeGoogleMapsLink(station)} className={styles.mapLink} rel="noopener noreferrer" target="_blank">Google Maps</a>
           </td>
         </tr>
 
         <tr>
           <td>Transport Authority</td>
           <td>
-            {station.TransportAuthority}
+            <TransportAuthorityLink authority={station.TransportAuthority} />
           </td>
         </tr>
       </table>
     </div>;
   }
+}
+
+function makeOpenStreetMapLink({AddressStreet, AddressZIP, AddressCity}: TStation): string {
+  const address = `${AddressStreet}, ${AddressZIP} ${AddressCity}`;
+  return `https://www.openstreetmap.org/?query=${encodeURIComponent(address)}`;
+}
+
+function makeBingMapsLink({AddressStreet, AddressZIP, AddressCity}: TStation): string {
+  const address = `${AddressStreet}, ${AddressZIP} ${AddressCity}, Germany`;
+  return `https://www.bing.com/maps?q=${encodeURIComponent(address)}`;
+}
+
+function makeGoogleMapsLink({AddressStreet, AddressZIP, AddressCity}: TStation): string {
+  const address = `${AddressStreet}, ${AddressZIP} ${AddressCity}, Germany`;
+  return `https://maps.google.com/maps?&q=${encodeURIComponent(address)}`;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {

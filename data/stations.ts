@@ -80,13 +80,22 @@ export function getStationStates(): FederalState[] {
     ];
 }
 
-export function getStationDS100s(): string[] {
-    const ds100s = getAllStations().map(s => s.DS100Office).filter(x => x !== "")
-    return Array.from(new Set(ds100s)).sort();
+export function getStationManagements(): string[] {
+    const management = getAllStations().map(s => s.StationManagement).filter(x => x !== "")
+    return Array.from(new Set(management)).sort();
 }
 
-export function getStationsByDS100(ds100: string) {
-    return getAllStations().filter(s => s.DS100Office === ds100);
+export function getStationsByManagement(management: string) {
+    return getAllStations().filter(s => s.StationManagement === management);
+}
+
+export function getStationTransportAuthorities(): string[] {
+    const authorities = getAllStations().map(s => s.TransportAuthority).filter(x => x !== "")
+    return Array.from(new Set(authorities)).sort();
+}
+
+export function getStationsByTransportAuthority(authority: string) {
+    return getAllStations().filter(s => s.TransportAuthority === authority);
 }
 
 /* readStations reads all stations from the disk */
@@ -94,16 +103,18 @@ function readStations(): Readonly<TStation>[] {
     const stationsCSVPath = path.join(process.cwd(), 'data', 'raw', 'stations.csv');
     const stations = fs.readFileSync(stationsCSVPath, "utf8").split("\n").slice(1).map(s => s.trim()).filter(s => s !== "").map(parseStation);
 
-    return stations.sort((a, b) => {
-        if (a.Category !== b.Category) {
-            return a.Category - b.Category;
-        }
-        if (a.RegionalArea !== b.RegionalArea) {
-            return compareString(a.RegionalArea, b.RegionalArea);
-        }
+    return stations.sort(compareStations);
+}
 
-        return a.ID - b.ID;
-    });
+function compareStations(a: TStation, b: TStation): number {
+    if (a.Category !== b.Category) {
+        return a.Category - b.Category;
+    }
+    if (a.RegionalArea !== b.RegionalArea) {
+        return compareString(a.RegionalArea, b.RegionalArea);
+    }
+
+    return a.ID - b.ID;
 }
 
 function compareString(a: string, b: string): number {

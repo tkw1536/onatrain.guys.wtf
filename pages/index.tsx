@@ -2,8 +2,8 @@ import { GetStaticProps } from "next";
 import Link from "next/link";
 import * as React from "react";
 import PageTitle from "../components/PageTitle";
-import { DS100Link, FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../components/StationData";
-import { getStationDS100s, getStationCategories, getStationCount, getStationRegions, getStationStates, } from "../data/stations";
+import { FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../components/StationData";
+import { getStationCategories, getStationCount, getStationRegions, getStationStates, } from "../data/stations";
 import { FederalState, RegionalArea, StationCategory } from "../data/station_types";
 
 const StationCatgeoryDescriptions: Record<StationCategory, string> = {
@@ -66,8 +66,15 @@ export default class Home extends React.Component<{count: number, categories: St
         </div>
 
         <div>
-          <h2>By DS100 Office</h2>
-          <Link href="/ds100"><a>View all DS100 Offices on one page</a></Link>.
+          <h2>Other Categories</h2>
+          <ul>
+              <li>
+                <Link href="/management"><a>Station Managements</a></Link>
+              </li>
+              <li>
+                <Link href="/authority"><a>Transport Authorities</a></Link>
+              </li>
+          </ul>
         </div>
     </>;
   }

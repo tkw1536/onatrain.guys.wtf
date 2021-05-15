@@ -32,12 +32,22 @@ export class FederalStateLink extends React.Component<{ state: FederalState }> {
     }
 }
 
-export class DS100Link extends React.Component<{ ds100: string}> {
+export class ManagementLink extends React.Component<{ management: string }> {
     render() {
-        const { ds100 } = this.props;
-        if (!ds100) return null;
-        return <Link href={`/ds100/${ds100}`}>
-            <a>{ds100}</a>
+        const { management } = this.props;
+        if (!management) return null;
+        return <Link href={`/management/${btoa(management)}`}>
+            <a>{management}</a>
+        </Link>;
+    }
+}
+
+export class TransportAuthorityLink extends React.Component<{ authority: string }> {
+    render() {
+        const { authority } = this.props;
+        if (!authority) return null;
+        return <Link href={`/authority/${btoa(authority)}`}>
+            <a>{authority}</a>
         </Link>;
     }
 }
