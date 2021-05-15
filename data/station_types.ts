@@ -12,6 +12,24 @@ export interface TStation {
     AddressZIP: string;
     AddressCity: string;
     TransportAuthority: string;
+    stop: TStop,
+}
+
+export interface TStop {
+    evaNr: number;
+    DS100: string[];
+    IFOPT: string;
+
+    name: string;
+    traffic: Traffic;
+
+    long: string;
+    lat: string;
+
+    operatorName: string;
+    operatorNr: number;
+    
+    status: string;
 }
 
 export enum StationCategory {
@@ -58,6 +76,30 @@ export function RegionalAreaToString(region: RegionalArea): string {
         throw new Error("Unknown RegionalArea: " + region);
     }
     return areaString;
+}
+
+export enum Traffic {
+    LongDistance = "Fernverkehr", // "mit Fernverkehr"
+    Regional = "Regionalverkehr", // "nur Regionalverkehr"
+    PrivateRegional = "Regionalverkehr (Privates Unternehmen)" // nur Regionalverkehr von privaten Eisenbahnunternehmen
+}
+
+const trafficStrings: Record<string, Traffic> = {
+    "FV": Traffic.LongDistance,
+    "RV": Traffic.Regional,
+    "nur DPN": Traffic.PrivateRegional,
+
+    // these are confusing
+    "78": Traffic.LongDistance, // HACK HACK HACK to fix broken dataset
+    "RVnur DPN": Traffic.PrivateRegional, // this appears to be a typo, not sure
+} 
+
+export function TrafficFromString(name: string, value: string): Traffic {
+    const traffic = trafficStrings[value];
+    if (!traffic) {
+        throw new Error("Unknown Traffic: " + value); 
+    }
+    return traffic;
 }
 
 export enum FederalState {

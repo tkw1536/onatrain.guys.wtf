@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
-import { FederalState, FederalStateFromString, RegionalArea, RegionalAreaFromString, StationCategory, TStation } from "./station_types";
+import { FederalState, FederalStateFromString, RegionalArea, RegionalAreaFromString, StationCategory, TrafficFromString, TStation, TStop } from "./station_types";
+import { alternates } from "./raw/alternates";
 
 
 let stations: Readonly<TStation>[];
@@ -100,10 +101,61 @@ export function getStationsByTransportAuthority(authority: string) {
 
 /* readStations reads all stations from the disk */
 function readStations(): Readonly<TStation>[] {
-    const stationsCSVPath = path.join(process.cwd(), 'data', 'raw', 'DBSuS-Uebersicht_Bahnhoefe-Stand2020-03.csv');
-    const stations = fs.readFileSync(stationsCSVPath, "utf8").split("\n").slice(1).map(s => s.trim()).filter(s => s !== "").map(parseStation);
+    // parse SuS dataset
+    const susPath = path.join(process.cwd(), 'data', 'raw', 'DBSuS-Uebersicht_Bahnhoefe-Stand2020-03.csv');
+    const susLines = parseCSV(susPath);
+    const susStations = susLines.map(parseSUSLine);
 
+    // parse Bahnhof dataset
+    const stopsPath = path.join(process.cwd(), 'data', 'raw', 'D_Bahnhof_2020_alle.CSV');
+    const stopLines = parseCSV(stopsPath);
+    const stops = stopLines.map(parseStop);
+
+
+    // integrate them!
+    let stations: Array<TStation> = susStations.map(s => ({stop: undefined!, ...s}));
+    stops.forEach(stop => {
+        stop.DS100.forEach(ds100 => {
+            let index = stations.findIndex(st => st.DS100Office === ds100);
+            if (index === -1) {
+                index = stations.findIndex(st => st.DS100Office.startsWith(ds100 + " "));
+            }
+            if (index === -1 && (ds100 in alternates)) {
+                const alt = alternates[ds100];
+                index = stations.findIndex(st => st.DS100Office === alt);
+            }
+            if (index === -1) {
+                // missingDS100s.add(ds100);
+                return;
+            }
+            const oldStop = stations[index].stop;
+            if (oldStop !== undefined) {
+                if (oldStop.evaNr !== stop.evaNr) {
+                    throw new Error("Station " + stations[index].Station+ ": Multiple different stops. ");
+                }
+            }
+            stations[index].stop = stop;
+        }) 
+    });
+
+    stations = stations.filter(station => {
+        if (!station.DS100Office) return false;
+        if (station.stop === undefined) {
+            // console.log("Station without alternate: " + station.DS100Office );
+            // console.log(JSON.stringify(station.Station) + ": " + JSON.stringify(station.DS100Office) + ",");
+            return false;
+        }
+
+        return true;
+    })
+
+    // integrate the dataset
     return stations.sort(compareStations);
+}
+
+function parseCSV(path: string, seperator: string = ";"): string[][] {
+    const lines = fs.readFileSync(path, "utf8").split("\n").slice(1).map(s => s.trim()).filter(s => s !== "")
+    return lines.map(line => line.trim().split(seperator));
 }
 
 function compareStations(a: TStation, b: TStation): number {
@@ -127,22 +179,22 @@ function compareString(a: string, b: string): number {
     }
 }
 
+type SUSStation = Pick<TStation, "State" | "RegionalArea" | "StationManagement" | "ID" | "Station" | "DS100Office" | "Category" | "AddressStreet" | "AddressZIP" | "AddressCity" | "TransportAuthority">;
+
 /** parseStation parses a single line into a station */
-function parseStation(line: string): Readonly<TStation> {
-    const parts = line.trim().split(";");
-    
+function parseSUSLine(line: Array<string>): Readonly<SUSStation> {
     const station = {
-        State: FederalStateFromString(parts[0]),
-        RegionalArea: RegionalAreaFromString(parts[1]),
-        StationManagement: parts[2],
-        ID: parseInt(parts[3], 10),
-        Station: parts[4],
-        DS100Office: parts[5],
-        Category: parseInt(parts[6], 10) as StationCategory,
-        AddressStreet: parts[7],
-        AddressZIP: parts[8],
-        AddressCity: parts[9],
-        TransportAuthority: parts[10],
+        State: FederalStateFromString(line[0]),
+        RegionalArea: RegionalAreaFromString(line[1]),
+        StationManagement: line[2],
+        ID: parseInt(line[3], 10),
+        Station: line[4],
+        DS100Office: line[5],
+        Category: parseInt(line[6], 10) as StationCategory,
+        AddressStreet: line[7],
+        AddressZIP: line[8],
+        AddressCity: line[9],
+        TransportAuthority: line[10],
     }
     
 
@@ -156,4 +208,36 @@ function parseStation(line: string): Readonly<TStation> {
     }
 
     return station;
+}
+
+function parseStop(line: Array<string>): Readonly<TStop> {
+    // EVA_NR;DS100;IFOPT;NAME;Verkehr;Laenge;Breite;Betreiber_Name;Betreiber_Nr;Status
+
+    const stop = {
+        evaNr: parseInt(line[0], 10),
+        DS100: line[1].split(","),
+        IFOPT: line[2],
+    
+        name: line[3],
+        traffic: TrafficFromString(line[1], line[4]),
+    
+        long: line[5],
+        lat: line[6],
+    
+        operatorName: line[7],
+        operatorNr: parseInt(line[8], 10),
+        
+        status: line[9],
+    }
+
+    // in development mode, throw errors that occur during parsing!
+    if (process.env.NODE_ENV === "development") {
+        for (let key in stop) {
+            if ((stop as any)[key] === undefined) {
+                throw new Error("Station " + stop.evaNr + ": " + key + " is undefined! ");
+            }
+        }
+    }
+
+    return stop;
 }
