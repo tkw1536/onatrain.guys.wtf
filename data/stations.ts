@@ -100,7 +100,7 @@ export function getStationsByTransportAuthority(authority: string) {
 
 /* readStations reads all stations from the disk */
 function readStations(): Readonly<TStation>[] {
-    const stationsCSVPath = path.join(process.cwd(), 'data', 'raw', 'stations.csv');
+    const stationsCSVPath = path.join(process.cwd(), 'data', 'raw', 'DBSuS-Uebersicht_Bahnhoefe-Stand2020-03.csv');
     const stations = fs.readFileSync(stationsCSVPath, "utf8").split("\n").slice(1).map(s => s.trim()).filter(s => s !== "").map(parseStation);
 
     return stations.sort(compareStations);
