@@ -1,9 +1,10 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import * as React from "react";
 import PageTitle from "../../components/PageTitle";
-import { FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../../components/StationData";
+import { DS100Link, FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../../components/StationData";
 import { getStationByID, getStationIDs } from "../../data/stations";
 import { TStation } from "../../data/station_types";
+import Ds100 from "../ds100/[ds100]";
 import style from "./station.module.css";
 
 export default class Station extends React.Component<{ station: TStation }> {
@@ -26,7 +27,7 @@ export default class Station extends React.Component<{ station: TStation }> {
 
         <tr>
           <td>DS 100</td>
-          <td>{station.DS100Office}</td>
+          <td><DS100Link ds100={station.DS100Office} /></td>
         </tr>
 
         <tr>

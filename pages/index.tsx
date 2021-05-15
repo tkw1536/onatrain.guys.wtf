@@ -2,9 +2,9 @@ import { GetStaticProps } from "next";
 import Link from "next/link";
 import * as React from "react";
 import PageTitle from "../components/PageTitle";
-import { FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../components/StationData";
-import { getStationCategories, getStationCount, getStationRegions, getStationStates, } from "../data/stations";
-import { FederalState, FederalStateToString, RegionalArea, StationCategory } from "../data/station_types";
+import { DS100Link, FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../components/StationData";
+import { getStationDS100s, getStationCategories, getStationCount, getStationRegions, getStationStates, } from "../data/stations";
+import { FederalState, RegionalArea, StationCategory } from "../data/station_types";
 
 const StationCatgeoryDescriptions: Record<StationCategory, string> = {
   1: "Traffic Hub",
@@ -26,9 +26,9 @@ const RegionalAreaStates: Record<RegionalArea, FederalState[]> = {
   "center": [FederalState.Hesse, FederalState.RhinelandPalatinate, FederalState.Saarland],
 }
 
-export default class Home extends React.Component<{count: number, categories: StationCategory[], regions: RegionalArea[], states: FederalState[]}> {
+export default class Home extends React.Component<{count: number, categories: StationCategory[], regions: RegionalArea[]}> {
   render() {
-    const { count, categories, regions, states } = this.props;
+    const { count, categories, regions } = this.props;
     return <>
         <PageTitle noHomeLink>On A Train</PageTitle>
         <div>
@@ -36,7 +36,7 @@ export default class Home extends React.Component<{count: number, categories: St
         </div>
         <div>
           <h2>All Stations</h2>
-          <Link href="/all"><a>View all {count} Stations on one page</a></Link>.
+          <Link href="/station"><a>View all {count} Stations on one page</a></Link>. <br />
         </div>
 
         <div>
@@ -63,6 +63,11 @@ export default class Home extends React.Component<{count: number, categories: St
                 }</td>
               </tr>)}
           </table>
+        </div>
+
+        <div>
+          <h2>By DS100 Office</h2>
+          <Link href="/ds100"><a>View all DS100 Offices on one page</a></Link>.
         </div>
     </>;
   }

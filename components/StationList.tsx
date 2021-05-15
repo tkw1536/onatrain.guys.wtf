@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TStation } from "../data/station_types";
 import Link from "next/link";
-import { RegionalAreaLink, FederalStateLink, StationCategoryLink } from "./StationData";
+import { RegionalAreaLink, FederalStateLink, StationCategoryLink, DS100Link } from "./StationData";
 
 export default class StationList extends React.Component<{stations: Readonly<TStation>[]}> {
   render() {
@@ -32,7 +32,7 @@ class StationRow extends React.Component<{station: TStation}> {
                 <Link href={`/station/${station.ID}`}><a>{station.Station}</a></Link>
             </td>
             <td>
-                {station.DS100Office}
+                <DS100Link ds100={station.DS100Office} />
             </td>
             <td>
                 {station.ID}

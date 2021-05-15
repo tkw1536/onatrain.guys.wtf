@@ -23,12 +23,21 @@ export class RegionalAreaLink extends React.Component<{ region: RegionalArea }> 
 }
 
 
-
 export class FederalStateLink extends React.Component<{ state: FederalState }> {
     render() {
         const { state } = this.props;
         return <Link href={`/state/${state}`}>
             <a>{FederalStateToString(state)}</a>
+        </Link>;
+    }
+}
+
+export class DS100Link extends React.Component<{ ds100: string}> {
+    render() {
+        const { ds100 } = this.props;
+        if (!ds100) return null;
+        return <Link href={`/ds100/${ds100}`}>
+            <a>{ds100}</a>
         </Link>;
     }
 }

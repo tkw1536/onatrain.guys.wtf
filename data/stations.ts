@@ -80,6 +80,15 @@ export function getStationStates(): FederalState[] {
     ];
 }
 
+export function getStationDS100s(): string[] {
+    const ds100s = getAllStations().map(s => s.DS100Office).filter(x => x !== "")
+    return Array.from(new Set(ds100s)).sort();
+}
+
+export function getStationsByDS100(ds100: string) {
+    return getAllStations().filter(s => s.DS100Office === ds100);
+}
+
 /* readStations reads all stations from the disk */
 function readStations(): Readonly<TStation>[] {
     const stationsCSVPath = path.join(process.cwd(), 'data', 'raw', 'stations.csv');
