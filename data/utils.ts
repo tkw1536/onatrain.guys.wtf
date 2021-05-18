@@ -18,10 +18,23 @@ export function groupBy<T>(data: Array<T>, group: (obj: T) => string): Array<Arr
 
     return result;
 }
+
+/* calls btoa() when available, otherwise falls back to Buffer.from */
+function _btoa(input: string): string {
+    if(typeof btoa === 'function') return btoa(input);
+    return Buffer.from(input).toString('base64');
+}
+
+/** calls atob when available, otherwise falls back to Buffer.from */
+function _atob(input: string): string {
+    if (typeof atob === 'function') return atob(input);
+    return Buffer.from(input, 'base64').toString();
+}
+
 export function encodeData(data: string): string {
-    return btoa(data).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '@');
+    return _btoa(data).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '@');
 }
 
 export function decodeData(binary: string): string {
-    return atob(binary.replaceAll('-', '+').replaceAll('_', '/').replaceAll('@', '='));
+    return _atob(binary.replaceAll('-', '+').replaceAll('_', '/').replaceAll('@', '='));
 }
