@@ -31,10 +31,19 @@ function _atob(input: string): string {
     return Buffer.from(input, 'base64').toString();
 }
 
+function replaceAll(input: string, original: string, replacement: string) {
+    if (typeof String.prototype.replaceAll === 'function') return input.replaceAll(original, replacement);
+    return input.split(original).join(replacement);
+}
+
+function mapAll(input: string, mapping: Record<string, string>): string {
+    return Object.entries(mapping).reduce((acc, [key, value]) => replaceAll(acc, key, value), input);
+}
+
 export function encodeData(data: string): string {
-    return _btoa(data).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '@');
+    return mapAll(_btoa(data), {'+': '-', '/': '_', '=': '@'});
 }
 
 export function decodeData(binary: string): string {
-    return _atob(binary.replaceAll('-', '+').replaceAll('_', '/').replaceAll('@', '='));
+    return _atob(mapAll(binary, {'-': '+', '_': '/', '@': '='}));
 }
