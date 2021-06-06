@@ -90,3 +90,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
     }
   };
 }
+
+// disable client-side JavaScript
+export const config = { unstable_runtimeJS: false };

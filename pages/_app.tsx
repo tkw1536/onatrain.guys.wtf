@@ -54,3 +54,6 @@ export default class extends App {
         </>;
     }
 }
+
+// disable client-side JavaScript
+export const config = { unstable_runtimeJS: false };
