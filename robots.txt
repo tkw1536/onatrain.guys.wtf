@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://onatrain.guys.wtf
+
+# Sitemaps
+Sitemap: https://onatrain.guys.wtf/sitemap.xml
+Sitemap: https://onatrain.guys.wtf/sitemap-1.xml
