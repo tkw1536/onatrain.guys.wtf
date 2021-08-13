@@ -10,7 +10,7 @@
     "deploy": "yarn build && push-dir --dir=out --branch=gh-pages"
   },
   "dependencies": {
-    "next": "10.2.3",
+    "next": "11.1.0",
     "nprogress": "^0.2.0",
     "push-dir": "^0.4.1",
     "react": "17.0.2",
