@@ -1,9 +1,8 @@
 import path from "path";
 import fs from "fs";
-import { FederalState, FederalStateFromString, RegionalArea, RegionalAreaFromString, StationCategory, TrafficFromString, TStation, TStop, TTrack } from "./station_types";
+import { FederalState, FederalStateFromString, FederalStateToString, RegionalArea, RegionalAreaFromString, RegionalAreaToString, StationCategory, TrafficFromString, TStation, TStop, TTrack } from "./station_types";
 import { alternates } from "./raw/alternates";
 import { groupBy } from "./utils";
-
 
 let stations: Readonly<TStation>[];
 export function getAllStations() {

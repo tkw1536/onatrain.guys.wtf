@@ -1,11 +1,33 @@
 import * as React from "react";
-import { TStation } from "../data/station_types";
+import { RegionalAreaToString, FederalStateToString, TStation } from "../data/station_types";
 import Link from "next/link";
 import { RegionalAreaLink, FederalStateLink, StationCategoryLink, ManagementLink, TransportAuthorityLink } from "./StationData";
+import match from "../data/match";
 
-export default class StationList extends React.Component<{stations: Readonly<TStation>[]}> {
+interface StationListProps {
+    stations: Readonly<TStation>[]
+}
+
+interface StationListState {
+    stations: Readonly<TStation>[];
+    filter: string;
+}
+
+
+export default class StationList extends React.Component<StationListProps, StationListState> {
+  state: StationListState = { stations: [], filter: ""}
+  static getDerivedStateFromProps(props:  StationListProps, state: StationListState): StationListState {
+    const { stations } = props;
+    const { filter } = state;
+    return { filter: filter, stations: stations.filter(s => match(s, filter) > 0) };
+  }
+  private readonly updateFilter = (event: React.ChangeEvent<HTMLInputElement>) => {
+      event.preventDefault();
+      const filter = event.target.value;
+      this.setState(({ stations }) => StationList.getDerivedStateFromProps(this.props, { stations, filter }))
+  }
   render() {
-    const {stations} = this.props;
+    const {stations, filter } = this.state;
     return <table>
         <thead>
             <tr>
@@ -17,9 +39,17 @@ export default class StationList extends React.Component<{stations: Readonly<TSt
                 <th>State</th>
                 <th>Management</th>
                 <th>Transport Authority</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td colSpan={8}>
+                <input value={filter} onChange={this.updateFilter} />
+                </td>
+            </tr>
+        </tbody>
+        <tbody> 
             {stations.map(station => <StationRow key={station.ID} station={station} />)}
         </tbody>
     </table>;
