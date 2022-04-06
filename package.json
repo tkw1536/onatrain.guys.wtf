@@ -20,7 +20,7 @@
     "@types/nprogress": "^0.2.0",
     "@types/react": "^17.0.5",
     "gh-pages": "^3.2.3",
-    "next-sitemap": "^1.6.57",
+    "next-sitemap": "^2.5.17",
     "typescript": "^4.2.4"
   }
 }
