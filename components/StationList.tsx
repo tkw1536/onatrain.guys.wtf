@@ -3,6 +3,7 @@ import { RegionalAreaToString, FederalStateToString, TStation } from "../data/st
 import Link from "next/link";
 import { RegionalAreaLink, FederalStateLink, StationCategoryLink, ManagementLink, TransportAuthorityLink } from "./StationData";
 import match from "../data/match";
+import { BoardLink } from "../data/board";
 
 interface StationListProps {
     stations: Readonly<TStation>[]
@@ -32,6 +33,7 @@ export default class StationList extends React.Component<StationListProps, Stati
         <thead>
             <tr>
                 <th>Name</th>
+                <th />
                 <th>DS 100</th>
                 <th>ID</th>
                 <th>Category</th>
@@ -62,6 +64,23 @@ class StationRow extends React.Component<{station: TStation}> {
         return <tr>
             <td>
                 <Link href={`/station/${station.ID}`}><a>{station.Station}</a></Link>
+            </td>
+            <td>
+                <small>
+                    <a href={BoardLink({
+                        bhf: station.DS100Office,
+                        typ: 'an',
+                        lang: 'de',
+                        SecLang: 'en',
+                    })} target="_blank" rel="noopener noreferer">An</a>
+                    &nbsp;
+                    <a href={BoardLink({
+                        bhf: station.DS100Office,
+                        typ: 'ab',
+                        lang: 'de',
+                        SecLang: 'en',
+                    })} target="_blank" rel="noopener noreferer">Ab</a>
+                </small>
             </td>
             <td>
                 <pre>{station.DS100Office}</pre>

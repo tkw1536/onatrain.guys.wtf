@@ -2,6 +2,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import * as React from "react";
 import PageTitle from "../../components/PageTitle";
 import { FederalStateLink, ManagementLink, RegionalAreaLink, StationCategoryLink, TransportAuthorityLink } from "../../components/StationData";
+import { BoardLink } from "../../data/board";
 import { getStationByID, getStationIDs } from "../../data/stations";
 import { TStation, TTrack } from "../../data/station_types";
 import styles from "./station.module.css";
@@ -21,6 +22,24 @@ export default class Station extends React.Component<{ station: TStation }> {
           <tr>
             <td>Name</td>
             <td>{station.Station}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <a href={BoardLink({
+                bhf: station.DS100Office,
+                typ: 'an',
+                lang: 'de',
+                SecLang: 'en',
+              })} target="_blank" rel="noopener noreferer">Ankunft</a>
+              &nbsp;
+              <a href={BoardLink({
+                bhf: station.DS100Office,
+                typ: 'ab',
+                lang: 'de',
+                SecLang: 'en',
+              })} target="_blank" rel="noopener noreferer">Abfahrt</a>
+            </td>
           </tr>
         </Group>
 
@@ -131,11 +150,12 @@ export default class Station extends React.Component<{ station: TStation }> {
           <th>Name</th>
           <th>Length</th>
           <th>Height</th>
+          <th></th>
         </tr>
-        <Group key="" width={3}></Group>
+        <Group key="" width={4}></Group>
         {station.platforms.map(platform => {
-          return <Group key={platform[0].platform} width={3}>
-            {platform.map(track => <Track key={track.name} track={track} />)}
+          return <Group key={platform[0].platform} width={4}>
+            {platform.map(track => <Track key={track.name} track={track} station={station} />)}
           </Group>
         })}
       </table>
@@ -157,9 +177,9 @@ class Group extends React.Component<{ width?: number }> {
   }
 }
 
-class Track extends React.Component<{ track: TTrack }> {
+class Track extends React.Component<{ track: TTrack, station: TStation }> {
   render() {
-    const { track } = this.props;
+    const { track, station } = this.props;
     return <tr>
         <td>
           {track.name}
@@ -169,6 +189,23 @@ class Track extends React.Component<{ track: TTrack }> {
         </td>
         <td>
           {track.height} cm
+        </td>
+        <td>
+          <a href={BoardLink({
+            bhf: station.DS100Office,
+            typ: 'an',
+            lang: 'de',
+            SecLang: 'en',
+            platform: track.number,
+          })} target="_blank" rel="noopener noreferer">Ankunft</a>
+          &nbsp;
+          <a href={BoardLink({
+            bhf: station.DS100Office,
+            typ: 'ab',
+            lang: 'de',
+            SecLang: 'en',
+            platform: track.number,
+          })} target="_blank" rel="noopener noreferer">Abfahrt</a>
         </td>
       </tr>
   }
