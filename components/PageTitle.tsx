@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import style from "./PageTitle.module.css";
 
-export default class PageTitle extends React.Component<{noHomeLink?: boolean}> {
+export default class PageTitle extends React.Component<{noHomeLink?: boolean, children: React.ReactNode[] | React.ReactNode}> {
     render() {
         const { children, noHomeLink } = this.props;
         const displayHome = !noHomeLink;

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export && yarn postbuild",
+    "build": "next build && yarn postbuild",
     "postbuild": "next-sitemap",
     "start": "next start",
     "deploy": "yarn build && gh-pages --dist out --no-history --dotfiles"

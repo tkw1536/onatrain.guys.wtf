@@ -163,7 +163,7 @@ export default class Station extends React.Component<{ station: TStation }> {
   }
 }
 
-class Group extends React.Component<{ width?: number }> {
+class Group extends React.Component<{ width?: number, children?: React.ReactNode | React.ReactNode[] }> {
   render() {
     const { children, width = 2 } = this.props;
     return <>
