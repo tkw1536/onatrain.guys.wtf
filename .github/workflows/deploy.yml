@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: '16'
       - name: Install dependencies using 'yarn install'
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Deploy using 'yarn deploy'
         run: |
           git config --local user.email "${{ github.actor }}@users.noreply.github.com"
