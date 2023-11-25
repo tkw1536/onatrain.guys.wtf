@@ -288,3 +288,21 @@ function parseTrack(line: Array<string>): TTrack {
     
     return track;
 }
+
+export interface StationMatch {
+    name: string;
+    normalized: string;
+    ID: number;
+}
+
+let matches: Readonly<StationMatch>[];
+export function getAllMatches():  Readonly<StationMatch>[] {
+    if (!matches) {
+        matches = getAllStations().map(x => ({name: x.Station, normalized: normalize(x.Station), ID: x.ID}))
+    }
+    return matches.slice();
+} 
+
+function normalize(name: string): string {
+    return name.replace(/[^a-zA-Z]/g, "").replace(/\s+/, " ").trim();
+}

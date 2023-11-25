@@ -67,6 +67,11 @@
   resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-12.1.0.tgz#d27e7e76c87a460a4da99c5bfdb1618dcd6cd064"
   integrity sha512-aBvcbMwuanDH4EMrL2TthNJy+4nP59Bimn8egqv6GHMVj0a44cU6Au4PjOhLNqEh9l+IpRGBqMTzec94UdC5xg==
 
+"@types/fuzzyset@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@types/fuzzyset/-/fuzzyset-1.0.7.tgz#c38098743e95673adf2431f6bc4de60e0c56170b"
+  integrity sha512-jOXAy+3ImMsLycygTOHZzLyYDDAmw0RGgbGnftz0q3VCt0Lcl8ZxLsm0ODkSvSEB5qMYM/Fk6FPD49VHUUyuhw==
+
 "@types/node@^15.0.2":
   version "15.14.9"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-15.14.9.tgz#bc43c990c3c9be7281868bbc7b8fdd6e2b57adfa"
@@ -207,6 +212,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha1-FQStJSMVjKpA20onh8sBQRmU6k8=
+
+fuzzyset@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/fuzzyset/-/fuzzyset-1.0.7.tgz#dbef22072ab3315b0ded28a235c1006ec9abd3fe"
+  integrity sha512-RjcvWPK6v+FHwierTqnjXjtF6fgZCOVucORlOt4ZEJRrHUqt4tRiCIzg1Zm0XMSAZGMTBCSHPx4IgdBH3m0VZg==
 
 gh-pages@^3.2.3:
   version "3.2.3"

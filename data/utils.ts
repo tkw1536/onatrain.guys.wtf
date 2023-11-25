@@ -47,3 +47,7 @@ export function encodeData(data: string): string {
 export function decodeData(binary: string): string {
     return _atob(mapAll(binary, {'-': '+', '_': '/', '@': '='}));
 }
+
+export function normalizeName(name: string): string {
+    return name.replace(/[^a-zA-Z-]/g, "").replace(/\s+/, " ").trim();
+}

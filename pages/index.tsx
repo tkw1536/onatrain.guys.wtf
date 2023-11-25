@@ -3,8 +3,11 @@ import Link from "next/link";
 import * as React from "react";
 import PageTitle from "../components/PageTitle";
 import { FederalStateLink, RegionalAreaLink, StationCategoryLink } from "../components/StationData";
-import { getStationCategories, getStationCount, getStationRegions, getStationStates, } from "../data/stations";
+import { StationMatch, getAllMatches, getStationCategories, getStationCount, getStationRegions, getStationStates, } from "../data/stations";
 import { FederalState, RegionalArea, StationCategory } from "../data/station_types";
+import { default as FuzzySet } from "fuzzyset";
+import { normalizeName } from "../data/utils"
+import { withRouter, NextRouter } from "next/router";
 
 const StationCatgeoryDescriptions: Record<StationCategory, string> = {
   1: "Traffic Hub",
@@ -26,17 +29,23 @@ const RegionalAreaStates: Record<RegionalArea, FederalState[]> = {
   "center": [FederalState.Hesse, FederalState.RhinelandPalatinate, FederalState.Saarland],
 }
 
-export default class Home extends React.Component<{count: number, categories: StationCategory[], regions: RegionalArea[]}> {
+export default class Home extends React.Component<{count: number, categories: StationCategory[], regions: RegionalArea[], matches: Readonly<StationMatch>[]}> {
   render() {
-    const { count, categories, regions } = this.props;
+    const { count, categories, regions, matches } = this.props;
     return <>
         <PageTitle noHomeLink>On A Train</PageTitle>
         <div>
           This page contains information about Stations and Tracks of Deutsche Bahn. 
         </div>
+
         <div>
           <h2>All Stations</h2>
           <Link href="/station"><a>View all {count} Stations on one page</a></Link>. <br />
+        </div>
+
+        <div>
+          <h2>Jump To Station</h2>
+          <StationJump all={matches} />
         </div>
 
         <div>
@@ -80,6 +89,92 @@ export default class Home extends React.Component<{count: number, categories: St
   }
 }
 
+
+interface StationJumpProps { all: Readonly<StationMatch>[], router: NextRouter; }
+interface StationJumpState {matches: Readonly<StationMatch>[]}
+
+const StationJump = withRouter(class extends React.Component<StationJumpProps, StationJumpState> {
+  state: StationJumpState = { matches: [] as StationMatch[]}
+
+  private querySet: FuzzySet | null = null;
+  private nToMatch: Record<string,StationMatch> = {};
+  private query(query: string): StationMatch[] {
+    // normalize the query and bail out if there isn't anything
+    const q = normalizeName(query);
+    if (q === "") {
+      return [];
+    }
+
+    // initialize the queryset (if we didn't already)
+    if (!this.querySet) {
+      this.querySet = FuzzySet();
+      this.props.all.forEach(e => {
+        this.querySet!.add(e.normalized)
+        this.nToMatch[e.normalized] = e;
+      });
+    }
+
+    // find results
+    const results = this.querySet.get(q);
+    if (!results) {
+      return [];
+    }
+    // TODO: Sort stable!
+    results.sort((a,b) => b[0] - a[0]);
+    console.log(results);
+
+    // get the normalized results
+    const names = results.sort((a,b) => b[0] - a[0])
+    return names.map((e) => this.nToMatch[e[1]]);
+  }
+
+  private update = debounce((event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ matches: this.query(event.target.value) });
+  }, 150)
+
+  private onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const { matches } = this.state;
+    if (matches.length < 1) {
+      return;
+    }
+    
+    this.props.router.push(`/station/${matches[0].ID}`);
+  }
+
+  render() {
+    const { matches } = this.state;
+    return <>
+      <form onSubmit={this.onSubmit}>
+      <input type="text" autoComplete="false" onChange={this.update}></input>
+      </form>
+      <p>
+        Type the name of any station for it to start appearing.
+        Hit enter to navigate to the first match.
+      <table>
+        { matches.map(s => <tr key={s.ID}><td><a href={`/station/${s.ID}`}>{s.name}</a></td></tr>)}
+      </table>
+      </p>
+    </>
+  }
+})
+
+/** debounce a function with one argument */
+function debounce<T>(f: (arg: T) => void, delay: number): (arg: T) => void {
+  let id: NodeJS.Timeout | null;
+  return (arg: T) => {
+    // kill previous timeout (if any)
+    if (id !== null) {
+      window.clearTimeout(id);
+      id = null;
+    }
+
+    // set a new timeout
+    id = setTimeout(() => f(arg), delay);
+  }
+}
+
 export const getStaticProps: GetStaticProps = async (context) => {
   return {
     props: {
@@ -87,6 +182,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
       categories: getStationCategories(),
       regions: getStationRegions(),
       states: getStationStates(),
+      matches: getAllMatches(),
     }
   };
 }
